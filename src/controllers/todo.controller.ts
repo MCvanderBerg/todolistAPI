@@ -22,13 +22,14 @@ const remove = (req: Request, res: Response) => {
     return res.status(500).send("no id provided")
   }
 
-  const index = todos.findIndex(todo => todo.id !== id)
+  const index = todos.findIndex(todo => todo.id === id)
 
   if (index === -1) {
     return res.status(501).send("no such id exists")
   }
-
+  console.log(todos)
   todos.splice(index, 1)
+  console.log(todos)
 
   res.status(200).send("Successfully removed todo")
 }
