@@ -13,6 +13,8 @@
     "serve": "node dist/index.js"
   },
   "dependencies": {
-    "uuid": "^10.0.0"
+    "bcrypt": "^5.1.1",
+    "uuid": "^10.0.0",
+    "validator": "^13.12.0"
   }
 }
