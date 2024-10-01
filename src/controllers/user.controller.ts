@@ -1,5 +1,5 @@
 import { Request, Response } from "express"
-import User from "../models/user.model"
+import User, { users } from "../models/user.model"
 
 const signup = async (req: Request, res: Response): Promise<void> => {
   const {
@@ -12,12 +12,16 @@ const signup = async (req: Request, res: Response): Promise<void> => {
 
   try {
     const user = await User.signup(name, surname, email, password, gender)
-    return res.status(200).json(user)
+    res.status(200).json(user)
   } catch (err) {
-    return res.status(500).json({
-      error: err.message
+    res.status(500).json({
+      error: (err as { message: string }).message
     })
   }
+}
+
+const getAll = (req: Request, res: Response) => {
+  res.status(200).send()
 }
 
 export { signup };

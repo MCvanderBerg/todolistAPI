@@ -103,7 +103,7 @@ class User implements UserI {
 
 export default User;
 
-const users: User[] = [
+export const users: User[] = [
   new User("Christiaan", "van der Berg", "christiaan26c@gmail.com", "Christiaan123", "male"),
   new User("Noeline", "Rossouw", "noelinerossouw101@gmail.com", "Noeline123", "female"),
   new User("Test", "TestSurname", "test@gmail.com", "Test123", "male"),
