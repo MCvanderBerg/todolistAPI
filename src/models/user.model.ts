@@ -1,5 +1,7 @@
 import validator from "validator";
 import bcrypt from "bcrypt";
+import { v4 as uuidv4 } from 'uuid'
+import db from "../database/db";
 
 type Gender = 'male' | 'female'
 type Name = string;
@@ -7,8 +9,10 @@ type Surname = string;
 type Email = string;
 type Hash = string;
 type Password = string;
+type Id = string;
 
 interface UserI {
+  getId: () => Id,
   getName: () => Name,
   getSurname: () => Surname,
   getEmail: () => Email,
@@ -21,6 +25,7 @@ interface UserI {
 
 
 class User implements UserI {
+  private id: Id
   private name: Name
   private surname: Surname
   private email: Email
@@ -28,11 +33,16 @@ class User implements UserI {
   private gender: Gender
 
   constructor(name: Name, surname: Surname, email: Email, hash: Hash, gender: Gender) {
+    this.id = uuidv4();
     this.name = name
     this.surname = surname
     this.email = email
     this.hash = hash // should be hashed
     this.gender = gender
+  }
+
+  public getId() {
+    return this.id
   }
 
   public getName() {
@@ -85,26 +95,28 @@ class User implements UserI {
     }
 
     // TODO: check if its a strong password
-
-    if (users.some(user => user.email === email)) {
-      throw Error("Error: email already exists")
-    }
+    // TODO: check if email already exists in db
+    // TODO: check each not null values and if its being send 
 
     const salt = await bcrypt.genSalt(10)
     const hash = await bcrypt.hash(password, salt)
 
     const newUser = new User(name, surname, email, hash, gender)
-    users.push(newUser)
+
+    db.query(`
+     insert into users(id, name, surname, email, password, gender) 
+      values(?,?,?,?,?,?)
+             `, Object.values(newUser),
+      (err, result) => {
+        if (err) {
+          console.error(err)
+          throw Error(err.message)
+        }
+      },)
 
     return newUser
-
   }
 }
 
 export default User;
 
-export const users: User[] = [
-  new User("Christiaan", "van der Berg", "christiaan26c@gmail.com", "Christiaan123", "male"),
-  new User("Noeline", "Rossouw", "noelinerossouw101@gmail.com", "Noeline123", "female"),
-  new User("Test", "TestSurname", "test@gmail.com", "Test123", "male"),
-]
